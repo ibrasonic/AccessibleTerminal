@@ -1,0 +1,136 @@
+<Window x:Class="AccessibleTerminal.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Accessible Terminal" 
+        Height="600" 
+        Width="1000"
+        Background="{StaticResource BackgroundBrush}"
+        WindowStartupLocation="CenterScreen"
+        AutomationProperties.Name="Accessible Terminal Window"
+        AutomationProperties.HelpText="Professional command-line interface with full screen reader support">
+    
+    <Window.InputBindings>
+        <KeyBinding Key="R" Modifiers="Control" Command="{Binding ToggleReadingModeCommand}"/>
+        <KeyBinding Key="OemPlus" Modifiers="Control" Command="{Binding IncreaseFontCommand}"/>
+        <KeyBinding Key="OemMinus" Modifiers="Control" Command="{Binding DecreaseFontCommand}"/>
+        <KeyBinding Key="D0" Modifiers="Control" Command="{Binding ResetFontCommand}"/>
+        <KeyBinding Key="H" Modifiers="Control" Command="{Binding ToggleHighContrastCommand}"/>
+        <KeyBinding Key="L" Modifiers="Control" Command="{Binding ClearScreenCommand}"/>
+    </Window.InputBindings>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0" Background="{StaticResource BackgroundBrush}" 
+              Foreground="{StaticResource ForegroundBrush}"
+              AutomationProperties.Name="Main Menu">
+            <MenuItem Header="_File" AutomationProperties.Name="File Menu">
+                <MenuItem Header="_New Terminal" InputGestureText="Ctrl+Shift+N" Click="NewTerminal_Click"
+                          AutomationProperties.Name="New Terminal"/>
+                <Separator/>
+                <MenuItem Header="E_xit" InputGestureText="Alt+F4" Click="Exit_Click"
+                          AutomationProperties.Name="Exit Application"/>
+            </MenuItem>
+            <MenuItem Header="_Edit" AutomationProperties.Name="Edit Menu">
+                <MenuItem Header="_Copy" InputGestureText="Ctrl+C" Click="Copy_Click"
+                          AutomationProperties.Name="Copy selected text"/>
+                <MenuItem Header="_Paste" InputGestureText="Ctrl+V" Click="Paste_Click"
+                          AutomationProperties.Name="Paste from clipboard"/>
+                <MenuItem Header="Select _All" InputGestureText="Ctrl+A" Click="SelectAll_Click"
+                          AutomationProperties.Name="Select all text"/>
+                <Separator/>
+                <MenuItem Header="C_lear Screen" InputGestureText="Ctrl+L" Click="Clear_Click"
+                          AutomationProperties.Name="Clear terminal screen"/>
+            </MenuItem>
+            <MenuItem Header="_View" AutomationProperties.Name="View Menu">
+                <MenuItem Header="_Reading Mode" InputGestureText="Ctrl+R" Click="ToggleReadingMode_Click"
+                          AutomationProperties.Name="Toggle reading mode for navigation with arrow keys"/>
+                <MenuItem Header="_High Contrast" InputGestureText="Ctrl+H" Click="ToggleHighContrast_Click"
+                          AutomationProperties.Name="Toggle high contrast theme"/>
+                <Separator/>
+                <MenuItem Header="Zoom _In" InputGestureText="Ctrl+Plus" Click="ZoomIn_Click"
+                          AutomationProperties.Name="Increase font size"/>
+                <MenuItem Header="Zoom _Out" InputGestureText="Ctrl+Minus" Click="ZoomOut_Click"
+                          AutomationProperties.Name="Decrease font size"/>
+                <MenuItem Header="_Reset Zoom" InputGestureText="Ctrl+0" Click="ResetZoom_Click"
+                          AutomationProperties.Name="Reset font size to default"/>
+            </MenuItem>
+            <MenuItem Header="_Help" AutomationProperties.Name="Help Menu">
+                <MenuItem Header="_Keyboard Shortcuts" Click="ShowShortcuts_Click"
+                          AutomationProperties.Name="Show keyboard shortcuts"/>
+                <MenuItem Header="_About" Click="About_Click"
+                          AutomationProperties.Name="About Accessible Terminal"/>
+            </MenuItem>
+        </Menu>
+        
+        <!-- Terminal Content -->
+        <Border Grid.Row="1" BorderBrush="{StaticResource FocusBrush}" BorderThickness="0"
+                Padding="10"
+                AutomationProperties.Name="Terminal Output Area">
+            <ScrollViewer x:Name="ScrollViewer" 
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto"
+                          AutomationProperties.Name="Terminal scroll area">
+                <TextBox x:Name="TerminalTextBox"
+                         FontFamily="Consolas, Courier New"
+                         FontSize="14"
+                         Background="{StaticResource BackgroundBrush}"
+                         Foreground="{StaticResource ForegroundBrush}"
+                         CaretBrush="{StaticResource ForegroundBrush}"
+                         SelectionBrush="{StaticResource SelectionBrush}"
+                         BorderThickness="0"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         AcceptsTab="False"
+                         VerticalScrollBarVisibility="Disabled"
+                         HorizontalScrollBarVisibility="Disabled"
+                         PreviewKeyDown="TerminalTextBox_PreviewKeyDown"
+                         TextChanged="TerminalTextBox_TextChanged"
+                         SelectionChanged="TerminalTextBox_SelectionChanged"
+                         AutomationProperties.Name="Terminal"
+                         AutomationProperties.HelpText="Type commands here. Press Enter to execute. Use Ctrl+R for reading mode."/>
+            </ScrollViewer>
+        </Border>
+        
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2" Background="{StaticResource BackgroundBrush}" 
+                   Foreground="{StaticResource ForegroundBrush}"
+                   AutomationProperties.Name="Status Bar">
+            <StatusBarItem>
+                <TextBlock x:Name="ModeStatusText" 
+                           Text="Command Mode"
+                           AutomationProperties.LiveSetting="Polite"
+                           AutomationProperties.Name="Current mode indicator"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="ShellStatusText" 
+                           Text="Shell: PowerShell"
+                           AutomationProperties.Name="Current shell type"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="CursorPositionText" 
+                           Text="Ln 1, Col 1"
+                           AutomationProperties.Name="Cursor position"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="Screen Reader: Active"/>
+            </StatusBarItem>
+        </StatusBar>
+        
+        <!-- Hidden live region for screen reader announcements -->
+        <TextBlock x:Name="ScreenReaderAnnouncer" 
+                   Visibility="Collapsed"
+                   AutomationProperties.LiveSetting="Assertive"/>
+    </Grid>
+</Window>

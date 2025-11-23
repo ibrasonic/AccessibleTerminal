@@ -1,0 +1,21 @@
+<Application x:Class="AccessibleTerminal.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <!-- High Contrast Themes -->
+        <SolidColorBrush x:Key="BackgroundBrush" Color="#0C0C0C"/>
+        <SolidColorBrush x:Key="ForegroundBrush" Color="#CCCCCC"/>
+        <SolidColorBrush x:Key="SelectionBrush" Color="#264F78"/>
+        <SolidColorBrush x:Key="FocusBrush" Color="#00FFFF"/>
+        <SolidColorBrush x:Key="ErrorBrush" Color="#F44747"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#4EC9B0"/>
+        
+        <!-- Font Styles -->
+        <Style x:Key="TerminalTextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas, Courier New"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        </Style>
+    </Application.Resources>
+</Application>
